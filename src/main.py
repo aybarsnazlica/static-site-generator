@@ -1,21 +1,32 @@
-from textnode import TextNode, TextType
-from util import copy_content
+import os
+import shutil
+import sys
+
+from copystatic import copy_files_recursive
+from generate_content import generate_pages_recursive
 
 
-# def generate_page(from_path, template_path, dest_path):
-#     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
-#     with open(from_path, "r", encoding="utf-8") as f:
-#         from_page = f.read()
-#
-#     with open(template_path, "r", encoding="utf-8") as f:
-#         template = f.read()
+dir_path_static = "./static"
+dir_path_public = "./docs"
+dir_path_content = "./content"
+template_path = "./template.html"
+default_basepath = "/"
 
 
 def main():
-    tn = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
-    print(tn)
-    copy_content("./static", "./public")
+    basepath = default_basepath
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
+
+    print("Generating content...")
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public, basepath)
 
 
-if __name__ == "__main__":
-    main()
+main()

@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -24,34 +21,33 @@ class HTMLNode:
 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag: Optional[str], value: str, props: dict = None):
+    def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
         if self.value is None:
-            raise ValueError("All leaf nodes must have a value")
+            raise ValueError("invalid HTML: no value")
         if self.tag is None:
             return self.value
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
-    def __eq__(self, other):
-        if not isinstance(other, LeafNode):
-            return False
-        return self.tag == other.tag and self.value == other.value and self.props == other.props
-
     def __repr__(self):
-        return f"LeafNode: tag={self.tag}, value={self.value}, props={self.props}"
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
 
 
 class ParentNode(HTMLNode):
-    def __init__(self, tag: str, children: list[HTMLNode], props: dict = None):
+    def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
 
     def to_html(self):
         if self.tag is None:
-            raise ValueError("All parents must have a tag")
+            raise ValueError("invalid HTML: no tag")
         if self.children is None:
-            raise ValueError("All parents must have a children")
-
-        children_html = "".join(child.to_html() for child in self.children)
+            raise ValueError("invalid HTML: no children")
+        children_html = ""
+        for child in self.children:
+            children_html += child.to_html()
         return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
+
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
