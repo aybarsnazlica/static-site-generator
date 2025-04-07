@@ -1,7 +1,7 @@
 import shutil
 import sys
 from pathlib import Path
-from copystatic import copy_files_recursive
+from copy_static import copy_files_recursive
 from generate_content import generate_pages_recursive
 
 default_base_path = Path("/")
@@ -25,7 +25,7 @@ def main():
     copy_files_recursive(dir_path_static, dir_path_public)
 
     print("Generating content...")
-    generate_pages_recursive(str(dir_path_content), str(template_path), str(dir_path_public), str(base_path))
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public, base_path)
 
 
 if __name__ == "__main__":
